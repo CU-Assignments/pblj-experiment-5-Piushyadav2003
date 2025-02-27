@@ -1,0 +1,80 @@
+import java.io.*;
+
+// Student class that implements Serializable
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L; // For version control during serialization
+    private int id;
+    private String name;
+    private double gpa;
+
+    // Constructor
+    public Student(int id, String name, double gpa) {
+        this.id = id;
+        this.name = name;
+        this.gpa = gpa;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getGpa() {
+        return gpa;
+    }
+
+    // Override toString() for easy printing
+    @Override
+    public String toString() {
+        return "Student{id=" + id + ", name='" + name + "', gpa=" + gpa + "}";
+    }
+}
+
+// Main class for serialization and deserialization
+public class StudentSerialization {
+    private static final String FILE_NAME = "student.dat"; // File name for storing object
+
+    public static void main(String[] args) {
+        // Create a student object
+        Student student = new Student(1, "John Doe", 3.8);
+
+        // Serialize the student object
+        serializeStudent(student);
+
+        // Deserialize the student object
+        Student deserializedStudent = deserializeStudent();
+        if (deserializedStudent != null) {
+            System.out.println("Deserialized Student: " + deserializedStudent);
+        }
+    }
+
+    // Method to serialize student object
+    private static void serializeStudent(Student student) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(student);
+            System.out.println("Student object serialized and saved to " + FILE_NAME);
+        } catch (IOException e) {
+            System.out.println("Error: An I/O error occurred during serialization.");
+            e.printStackTrace();
+        }
+    }
+
+    // Method to deserialize student object
+    private static Student deserializeStudent() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            return (Student) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: The file could not be found during deserialization.");
+        } catch (IOException e) {
+            System.out.println("Error: An I/O error occurred during deserialization.");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error: The class of the deserialized object could not be found.");
+        }
+        return null;
+    }
+}
